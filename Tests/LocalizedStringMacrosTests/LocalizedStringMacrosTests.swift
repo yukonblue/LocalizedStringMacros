@@ -9,19 +9,34 @@ import XCTest
 import LocalizedStringMacrosMacros
 
 let testMacros: [String: Macro.Type] = [
-    "stringify": StringifyMacro.self,
+    "memberPath": MemberPathMacro.self,
 ]
 #endif
+
+
 
 final class LocalizedStringMacrosTests: XCTestCase {
     func testMacro() throws {
         #if canImport(LocalizedStringMacrosMacros)
         assertMacroExpansion(
             """
-            #stringify(a + b)
+            enum Localization {
+              enum App {
+                 static var jaja: String {
+                   #memberPath(Localization.App.jaja)
+                 }
+              }
+            }
             """,
-            expandedSource: """
-            (a + b, "a + b")
+            expandedSource:
+            """
+            enum Localization {
+              enum App {
+                 static var jaja: String {
+                   Localization.App.jaja
+                 }
+              }
+            }
             """,
             macros: testMacros
         )
@@ -30,19 +45,19 @@ final class LocalizedStringMacrosTests: XCTestCase {
         #endif
     }
 
-    func testMacroWithStringLiteral() throws {
-        #if canImport(LocalizedStringMacrosMacros)
-        assertMacroExpansion(
-            #"""
-            #stringify("Hello, \(name)")
-            """#,
-            expandedSource: #"""
-            ("Hello, \(name)", #""Hello, \(name)""#)
-            """#,
-            macros: testMacros
-        )
-        #else
-        throw XCTSkip("macros are only supported when running tests for the host platform")
-        #endif
-    }
+//    func testMacroWithStringLiteral() throws {
+//        #if canImport(LocalizedStringMacrosMacros)
+//        assertMacroExpansion(
+//            #"""
+//            #stringify("Hello, \(name)")
+//            """#,
+//            expandedSource: #"""
+//            ("Hello, \(name)", #""Hello, \(name)""#)
+//            """#,
+//            macros: testMacros
+//        )
+//        #else
+//        throw XCTSkip("macros are only supported when running tests for the host platform")
+//        #endif
+//    }
 }
