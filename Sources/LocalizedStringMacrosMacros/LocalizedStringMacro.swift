@@ -1,8 +1,8 @@
 //
-//  MemberPathMacro.swift
+//  File.swift
 //  LocalizedStringMacros
 //
-//  Created by yukonblue on 2025-11-07.
+//  Created by Y on 2025-11-07.
 //
 
 import SwiftCompilerPlugin
