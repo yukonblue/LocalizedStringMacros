@@ -45,19 +45,36 @@ final class LocalizedStringMacrosTests: XCTestCase {
         #endif
     }
 
-//    func testMacroWithStringLiteral() throws {
-//        #if canImport(LocalizedStringMacrosMacros)
-//        assertMacroExpansion(
-//            #"""
-//            #stringify("Hello, \(name)")
-//            """#,
-//            expandedSource: #"""
-//            ("Hello, \(name)", #""Hello, \(name)""#)
-//            """#,
-//            macros: testMacros
-//        )
-//        #else
-//        throw XCTSkip("macros are only supported when running tests for the host platform")
-//        #endif
-//    }
+    func testMacroWithExtension() throws {
+        #if canImport(LocalizedStringMacrosMacros)
+        assertMacroExpansion(
+            """
+            enum Localization {}
+            extension Localization {
+                enum AddressSearch {}
+            }
+            extension Localization.AddressSearch {
+                static var addressSearchBarPlaceholderText: String {
+                    #memberPath(Localization.AddressSearch.addressSearchBarPlaceholderText)
+                }
+            }
+            """,
+            expandedSource:
+            """
+            enum Localization {}
+            extension Localization {
+                enum AddressSearch {}
+            }
+            extension Localization.AddressSearch {
+                static var addressSearchBarPlaceholderText: String {
+                    Localization.AddressSearch.addressSearchBarPlaceholderText
+                }
+            }
+            """,
+            macros: testMacros
+        )
+        #else
+        throw XCTSkip("macros are only supported when running tests for the host platform")
+        #endif
+    }
 }
